@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-WORKDIR /repo
+WORKDIR /testrepo
 RUN apt update && apt -y install git git-crypt
 
 RUN git config --global user.email "auser@example.com" && git config --global user.name "A User"
@@ -20,6 +20,6 @@ RUN git-crypt lock
 RUN mkdir /export
 VOLUME /export
 
-RUN echo 'tar cf /export/gitrepo.tar /repo && cp /gitcryptkey/thekey /export/ && /bin/bash' > /startup.sh && chmod 0755 /startup.sh
+RUN echo 'tar cf /export/gitrepo.tar /testrepo && cp /gitcryptkey/thekey /export/ && /bin/bash' > /startup.sh && chmod 0755 /startup.sh
 
 CMD [ "/bin/bash", "-c", "/startup.sh" ]
