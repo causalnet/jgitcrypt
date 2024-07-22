@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import static org.assertj.core.api.Assertions.*;
 
 class TestGitcrypt
 {
@@ -13,12 +16,13 @@ class TestGitcrypt
         try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testkey/thekey"))
         {
             GitcryptKey key = GitcryptKey.read(is);
-            System.out.println(key);
+            assertThat(key.getAesKey()).isNotEmpty();
+            assertThat(key.getHmacKey()).isNotEmpty();
         }
     }
 
     @Test
-    void testEverything() throws Exception
+    void testDecryption() throws Exception
     {
         GitcryptKey key;
         try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testkey/thekey"))
@@ -27,10 +31,10 @@ class TestGitcrypt
         }
 
         GitcryptDecoder decoder = new GitcryptDecoder(key);
-
         try (InputStream is = decoder.decode(TestGitcrypt.class.getResourceAsStream("/testrepo/secrets.txt")))
         {
-            is.transferTo(System.out);
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            assertThat(content).isEqualToIgnoringNewLines("This is a secret");
         }
     }
 }
