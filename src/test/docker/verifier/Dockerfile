@@ -13,13 +13,7 @@ RUN mkdir /gitcryptkey
 RUN git-crypt init
 RUN git-crypt export-key /gitcryptkey/thekey
 
-RUN git add * && git add .gitattributes
-RUN git commit -m "Initial commit"
-RUN git-crypt lock
-
-RUN mkdir /export
-VOLUME /export
-
-RUN echo 'tar cf /export/gitrepo.tar /testrepo && cp /gitcryptkey/thekey /export/ && /bin/bash' > /startup.sh && chmod 0755 /startup.sh
+RUN mkdir /results
+RUN echo "This is a result file" > /results/result.txt
 
 CMD [ "/bin/bash" ]
