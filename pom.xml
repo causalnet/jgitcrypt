@@ -134,6 +134,42 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<id>add-docker-results-resources</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/docker-results</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Needs to run again, later in the build lifecycle to catch docker's generated test results -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>docker-results-resources</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>testResources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.3.1</version>
@@ -142,7 +178,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.3.1</version>
-
 				<executions>
 					<execution>
 						<id>integration-test-predocker</id>
@@ -280,7 +315,6 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.44.0</version>
 						<executions>
 							<execution>
 								<id>generate-test-data</id>
@@ -319,7 +353,6 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>3.6.0</version>
 						<executions>
 							<execution>
 								<id>add-test-data-resource</id>

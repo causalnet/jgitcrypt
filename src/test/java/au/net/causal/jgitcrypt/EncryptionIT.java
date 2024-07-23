@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 class EncryptionIT
 {
     @Test
-    void verifySomething()
+    void doEncryption()
     {
-        System.out.println("Verification goes here");
+        System.out.println("Do encryption so that the result can get picked up by gitcrypt run inside docker");
     }
 }
