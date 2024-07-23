@@ -125,6 +125,8 @@
 									<name>causalnet/jgitcrypt-verifier:${project.version}</name>
 									<build>
 										<dockerFile>${project.basedir}/src/test/docker/verifier/Dockerfile</dockerFile>
+										<contextDir>${project.build.directory}/verifier-docker-data</contextDir>
+										<useDefaultExcludes>false</useDefaultExcludes>
 									</build>
 									<copy>
 										<entries>
