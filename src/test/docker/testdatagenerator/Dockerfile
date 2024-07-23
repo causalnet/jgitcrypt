@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:11.10
 WORKDIR /testrepo
 RUN apt update && apt -y install git git-crypt
 
