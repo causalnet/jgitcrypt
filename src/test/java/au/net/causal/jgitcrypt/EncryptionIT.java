@@ -6,6 +6,8 @@ import org.eclipse.jgit.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,6 +17,24 @@ class EncryptionIT
     void doEncryption()
     throws GitAPIException, IOException
     {
+        //Generate a gitcrypt key
+        //TODO for now just reuse the one generated for the input
+        GitcryptKey gitcryptKey;
+        try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testkey/thekey"))
+        {
+            gitcryptKey = GitcryptKey.read(is);
+        }
+
+
+        //Save gitcrypt key
+        Path keyFile = Path.of("target", "verifier-docker-data", "thekey");
+        Files.createDirectories(keyFile.getParent());
+        try (OutputStream os = Files.newOutputStream(keyFile))
+        {
+            gitcryptKey.write(os);
+        }
+
+        //Generate the git repo with encrypted file in it
         Path repoDir = Path.of("target", "verifier-docker-data", "it-gitrepo");
         FileUtils.delete(repoDir.toFile(), FileUtils.RECURSIVE | FileUtils.RETRY | FileUtils.SKIP_MISSING);
 

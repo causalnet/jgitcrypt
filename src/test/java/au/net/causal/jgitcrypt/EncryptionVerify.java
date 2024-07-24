@@ -25,7 +25,7 @@ class EncryptionVerify
     @Test
     void verifyAfterDockerRun()
     {
-        String resultTxt = readResource("/results/result.txt");
-        assertThat(resultTxt).isEqualToIgnoringNewLines("This is a result file");
+        String resultTxt = readResource("/results/newsecrets.txt");
+        assertThat(resultTxt).isEqualToIgnoringNewLines("This file should be encrypted.");
     }
 }

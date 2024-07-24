@@ -1,6 +1,7 @@
 package au.net.causal.jgitcrypt;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,5 +29,23 @@ class GitcryptIO
         while (fieldId != FIELD_ID_END);
 
         return dataMap;
+    }
+
+    static void writeFields(DataOutputStream data, Map<Integer, byte[]> dataMap)
+    throws IOException
+    {
+        for (Map.Entry<Integer, byte[]> entry : dataMap.entrySet())
+        {
+            int fieldId = entry.getKey();
+            int fieldLen = entry.getValue().length;
+            byte[] fieldData = entry.getValue();
+
+            data.writeInt(fieldId);
+            data.writeInt(fieldLen);
+            data.write(fieldData);
+        }
+
+        //End marker
+        data.writeInt(FIELD_ID_END);
     }
 }
