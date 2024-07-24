@@ -14,7 +14,7 @@ WORKDIR /it-gitrepo
 SHELL ["/bin/bash", "-c"]
 
 #Verify we have an encrypted file in the repo
-#RUN [[ `file -b --mime newsecrets.txt` == application/octet-stream* ]] || (echo File was not encrypted but should be && exit 1)
+RUN [[ `file -b --mime newsecrets.txt` == application/octet-stream* ]] || (echo File was not encrypted but should be && exit 1)
 
 #Decrypt
 #RUN git-crypt unlock /gitcryptkey/thekey
@@ -24,7 +24,5 @@ SHELL ["/bin/bash", "-c"]
 
 #Copy file for verification
 RUN cp /it-gitrepo/newsecrets.txt /results/newsecrets.txt
-
-#RUN echo "This is a result file" > /results/result.txt
 
 CMD [ "/bin/bash" ]

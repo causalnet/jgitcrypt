@@ -5,9 +5,11 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,7 +17,7 @@ class EncryptionIT
 {
     @Test
     void doEncryption()
-    throws GitAPIException, IOException
+    throws GitAPIException, IOException, GitcryptSecurityException
     {
         //Generate a gitcrypt key
         //TODO for now just reuse the one generated for the input
@@ -45,8 +47,13 @@ class EncryptionIT
         {
             //Encrypted file
             Path encryptedFile = repoDir.resolve("newsecrets.txt");
-            //TODO actually encrypt it
-            Files.writeString(encryptedFile, "This file should be encrypted.");
+
+            byte[] data = "This file should be encrypted.".getBytes(StandardCharsets.UTF_8);
+            try (InputStream dataIs = new ByteArrayInputStream(data);
+                 OutputStream out = Files.newOutputStream(encryptedFile))
+            {
+                new GitcryptDecoder(gitcryptKey).encode(dataIs, out);
+            }
             git.add().addFilepattern(encryptedFile.getFileName().toString()).call();
 
             //.gitattributes file
@@ -59,7 +66,5 @@ class EncryptionIT
                     .setCommitter("Someone", "someone@example.com")
                     .call();
         }
-
-        System.out.println("Do encryption so that the result can get picked up by gitcrypt run inside docker");
     }
 }
