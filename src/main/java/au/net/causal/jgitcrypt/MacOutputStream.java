@@ -28,21 +28,21 @@ public class MacOutputStream extends FilterOutputStream
     @Override
     public void write(int b) throws IOException
     {
-        super.write(b);
+        out.write(b);
         mac.update((byte)b);
     }
 
     @Override
     public void write(byte[] b) throws IOException
     {
-        super.write(b);
+        out.write(b);
         mac.update(b, 0, b.length);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException
     {
-        super.write(b, off, len);
+        out.write(b, off, len);
         mac.update(b, off, len);
     }
 

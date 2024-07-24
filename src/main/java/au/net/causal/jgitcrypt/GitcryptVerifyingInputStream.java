@@ -3,6 +3,7 @@ package au.net.causal.jgitcrypt;
 import javax.crypto.Mac;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HexFormat;
 
 /**
  * Gitcrypt input stream verifies data from gitcrypt decoded file data and provides ability to verify its contents against a signature.
@@ -10,6 +11,8 @@ import java.util.Arrays;
  */
 public class GitcryptVerifyingInputStream extends MacInputStream
 {
+    private static final HexFormat hex = HexFormat.ofDelimiter(" ").withUpperCase();
+
     private final byte[] nonce;
 
     /**
@@ -29,6 +32,10 @@ public class GitcryptVerifyingInputStream extends MacInputStream
     protected void checkSignature(byte[] streamDigest) throws VerificationException
     {
         if (!Arrays.equals(streamDigest, 0, nonce.length, nonce, 0, nonce.length))
-            throw new VerificationException("Encrypted file failed to verify against signature.");
+        {
+            throw new VerificationException("Encrypted file failed to verify against signature.  Expected signature ["
+                    + hex.formatHex(nonce) + "] does not match content ["
+                    + hex.formatHex(streamDigest, 0, nonce.length) + "].");
+        }
     }
 }

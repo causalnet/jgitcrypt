@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -33,11 +34,50 @@ class TestGitcrypt
         }
 
         GitcryptDecoder decoder = new GitcryptDecoder(key);
-        try (InputStream is = decoder.decode(TestGitcrypt.class.getResourceAsStream("/testrepo/secrets.txt")))
+        try (VerifiableInputStream is = decoder.decode(TestGitcrypt.class.getResourceAsStream("/testrepo/secrets.txt")))
         {
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertThat(content).isEqualToIgnoringNewLines("This is a secret");
+            is.verify();
         }
+    }
+
+    @Test
+    void testEncryptAndCompare() throws Exception
+    {
+        GitcryptKey key;
+        try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testkey/thekey"))
+        {
+            key = GitcryptKey.read(is);
+        }
+
+        byte[] encryptedFromGitcrypt;
+        try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testrepo/secrets.txt"))
+        {
+            encryptedFromGitcrypt = is.readAllBytes();
+        }
+
+        GitcryptDecoder decoder = new GitcryptDecoder(key);
+        byte[] decodedData;
+        try (VerifiableInputStream is = decoder.decode(new ByteArrayInputStream(encryptedFromGitcrypt)))
+        {
+            decodedData = is.readAllBytes();
+            String content = new String(decodedData, StandardCharsets.UTF_8);
+            assertThat(content).isEqualToIgnoringNewLines("This is a secret");
+            is.verify();
+        }
+
+        ByteArrayOutputStream encryptedByMeStream = new ByteArrayOutputStream();
+        try (InputStream is = new ByteArrayInputStream(decodedData))
+        {
+            decoder.encode(is, encryptedByMeStream);
+        }
+        byte[] encryptedByMe = encryptedByMeStream.toByteArray();
+
+        //Compare (with hexdump to ease debugging)
+        HexFormat hex = HexFormat.ofDelimiter(" ").withUpperCase();
+        assertThat(hex.formatHex(encryptedByMe)).isEqualTo(hex.formatHex(encryptedFromGitcrypt));
+        assertThat(encryptedByMe).contains(encryptedFromGitcrypt);
     }
 
     @Test
@@ -59,10 +99,11 @@ class TestGitcrypt
         decoder.encode(new ByteArrayInputStream(dataToEncode), encodeBuf);
 
         //Try to decrypt it again and make sure it matches original
-        try (InputStream is = decoder.decode(new ByteArrayInputStream(encodeBuf.toByteArray())))
+        try (VerifiableInputStream is = decoder.decode(new ByteArrayInputStream(encodeBuf.toByteArray())))
         {
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
             assertThat(content).isEqualTo(stringToEncode);
+            is.verify();
         }
     }
 }
