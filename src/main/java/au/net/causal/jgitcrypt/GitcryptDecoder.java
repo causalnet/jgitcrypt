@@ -2,6 +2,7 @@ package au.net.causal.jgitcrypt;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
@@ -12,8 +13,8 @@ import java.io.DataOutputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -57,6 +58,42 @@ public class GitcryptDecoder
             cipher.init(Cipher.DECRYPT_MODE, aesKey, ivSpec);
             Mac mac = hmac(key.getHmacKey());
             return new GitcryptVerifyingInputStream(new CipherInputStream(data, cipher), mac, nonce);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
+        {
+            throw new GitcryptSecurityException(e);
+        }
+    }
+
+    public void encode(InputStream dataToEncode, OutputStream outStream)
+    throws IOException, GitcryptSecurityException
+    {
+        try
+        {
+            Mac mac = hmac(key.getHmacKey());
+
+            //Read all data into a buffer since it needs to be streamed twice
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            MacOutputStream macStream = new MacOutputStream(buf, mac);
+            dataToEncode.transferTo(macStream);
+
+            //Signature
+            outStream.write(expectedSignature);
+
+            //Nonce - will be filled in when crypt stream is closed
+            byte[] nonce = mac.doFinal();
+            nonce = Arrays.copyOfRange(nonce, 0, 12); //Nonce is first 12 bytes
+            outStream.write(nonce);
+
+            //Write encrypted data
+            SecretKeySpec aesKey = new SecretKeySpec(key.getAesKey(), "AES");
+            byte[] nonceAndCounter = generateNonceAndCounter(nonce);
+            IvParameterSpec ivSpec = new IvParameterSpec(nonceAndCounter);
+            Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivSpec);
+
+            CipherOutputStream cipherStream = new CipherOutputStream(outStream, cipher);
+            cipherStream.write(buf.toByteArray());
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e)
         {
