@@ -50,7 +50,7 @@ public abstract class MacInputStream extends VerifiableInputStream
     {
         int n = super.read(b, off, len);
         if (n >= 0)
-            mac.update(b, off, len);
+            mac.update(b, off, n);
 
         return n;
     }
