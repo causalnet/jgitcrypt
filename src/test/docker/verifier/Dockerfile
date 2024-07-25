@@ -7,7 +7,7 @@ RUN git config --global user.email "auser@example.com" && git config --global us
 RUN mkdir /gitcryptkey
 RUN mkdir /results
 
-COPY thekey /gitcryptkey
+COPY generatedkey /gitcryptkey
 COPY it-gitrepo /it-gitrepo
 WORKDIR /it-gitrepo
 
@@ -17,7 +17,7 @@ SHELL ["/bin/bash", "-c"]
 RUN [[ `file -b --mime newsecrets.txt` == application/octet-stream* ]] || (echo File was not encrypted but should be && exit 1)
 
 #Decrypt
-RUN git-crypt unlock /gitcryptkey/thekey
+RUN git-crypt unlock /gitcryptkey/generatedkey
 
 #Verify file is now decrypted
 RUN [[ `file -b --mime newsecrets.txt` == text/plain* ]] || (echo File was not decrypted by git-crypt && exit 1)

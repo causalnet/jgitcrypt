@@ -20,16 +20,10 @@ class EncryptionIT
     throws GitAPIException, IOException, GitcryptSecurityException
     {
         //Generate a gitcrypt key
-        //TODO for now just reuse the one generated for the input
-        GitcryptKey gitcryptKey;
-        try (InputStream is = TestGitcrypt.class.getResourceAsStream("/testkey/thekey"))
-        {
-            gitcryptKey = GitcryptKey.read(is);
-        }
-
+        GitcryptKey gitcryptKey = GitcryptKey.generate();
 
         //Save gitcrypt key
-        Path keyFile = Path.of("target", "verifier-docker-data", "thekey");
+        Path keyFile = Path.of("target", "verifier-docker-data", "generatedkey");
         Files.createDirectories(keyFile.getParent());
         try (OutputStream os = Files.newOutputStream(keyFile))
         {

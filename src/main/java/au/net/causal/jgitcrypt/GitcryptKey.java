@@ -24,6 +24,7 @@ public class GitcryptKey
     private static final int FORMAT_VERSION = 2;
 
     private static final int AES_KEY_LEN_BYTES = 32;
+    private static final int HMAC_KEY_LEN_BYTES = 64;
 
     private static final byte[] expectedSignature = "\u0000GITCRYPTKEY".getBytes(StandardCharsets.US_ASCII);
 
@@ -109,9 +110,11 @@ public class GitcryptKey
     {
         try
         {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(AES_KEY_LEN_BYTES * Byte.SIZE);
-            return generate(version, keyGenerator);
+            KeyGenerator aesKeyGenerator = KeyGenerator.getInstance("AES");
+            aesKeyGenerator.init(AES_KEY_LEN_BYTES * Byte.SIZE);
+            KeyGenerator hmacKeyGenerator = KeyGenerator.getInstance("HmacSHA1");
+            hmacKeyGenerator.init(HMAC_KEY_LEN_BYTES * Byte.SIZE);
+            return generate(version, aesKeyGenerator, hmacKeyGenerator);
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -119,12 +122,12 @@ public class GitcryptKey
         }
     }
 
-    public static GitcryptKey generate(int version, KeyGenerator keyGenerator)
+    public static GitcryptKey generate(int version, KeyGenerator aesKeyGenerator, KeyGenerator hmacKeyGenerator)
     {
-        SecretKey aesKey = keyGenerator.generateKey();
+        SecretKey aesKey = aesKeyGenerator.generateKey();
         byte[] aesKeyBytes = aesKey.getEncoded();
 
-        SecretKey hmacKey = keyGenerator.generateKey();
+        SecretKey hmacKey = hmacKeyGenerator.generateKey();
         byte[] hmacKeyBytes = hmacKey.getEncoded();
 
         byte[] versionBytes = ByteBuffer.allocate(4).putInt(version).array();
