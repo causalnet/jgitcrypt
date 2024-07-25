@@ -1,12 +1,15 @@
 package au.net.causal.jgitcrypt;
 
-import java.io.ByteArrayInputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -19,6 +22,8 @@ public class GitcryptKey
     private static final int KEY_FIELD_HMAC_KEY = 5;
 
     private static final int FORMAT_VERSION = 2;
+
+    private static final int AES_KEY_LEN_BYTES = 32;
 
     private static final byte[] expectedSignature = "\u0000GITCRYPTKEY".getBytes(StandardCharsets.US_ASCII);
 
@@ -37,16 +42,7 @@ public class GitcryptKey
         if (data == null)
             return 0;
         else
-        {
-            try (DataInputStream is = new DataInputStream(new ByteArrayInputStream(data)))
-            {
-                return is.readInt();
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
+            return ByteBuffer.wrap(data).getInt();
     }
 
     public byte[] getAesKey()
@@ -100,5 +96,43 @@ public class GitcryptKey
         Map<Integer, byte[]> entries = GitcryptIO.readFields(data);
 
         return new GitcryptKey(headerFields, entries);
+    }
+
+    public static GitcryptKey generate()
+    throws GitcryptSecurityException
+    {
+        return generate(0);
+    }
+
+    public static GitcryptKey generate(int version)
+    throws GitcryptSecurityException
+    {
+        try
+        {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(AES_KEY_LEN_BYTES * Byte.SIZE);
+            return generate(version, keyGenerator);
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw new GitcryptSecurityException(e);
+        }
+    }
+
+    public static GitcryptKey generate(int version, KeyGenerator keyGenerator)
+    {
+        SecretKey aesKey = keyGenerator.generateKey();
+        byte[] aesKeyBytes = aesKey.getEncoded();
+
+        SecretKey hmacKey = keyGenerator.generateKey();
+        byte[] hmacKeyBytes = hmacKey.getEncoded();
+
+        byte[] versionBytes = ByteBuffer.allocate(4).putInt(version).array();
+
+        return new GitcryptKey(Map.of(), Map.of(
+                KEY_FIELD_VERSION, versionBytes,
+                KEY_FIELD_AES_KEY, aesKeyBytes,
+                KEY_FIELD_HMAC_KEY, hmacKeyBytes
+        ));
     }
 }
