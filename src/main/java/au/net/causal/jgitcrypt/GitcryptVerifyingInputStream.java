@@ -9,7 +9,7 @@ import java.util.HexFormat;
  * Gitcrypt input stream verifies data from gitcrypt decoded file data and provides ability to verify its contents against a signature.
  * Does not actually perform decryption of data, this is expected to have already been done in the underlying stream.
  */
-public class GitcryptVerifyingInputStream extends MacInputStream
+public class GitcryptVerifyingInputStream extends MacVerifiableInputStream
 {
     private static final HexFormat hex = HexFormat.ofDelimiter(" ").withUpperCase();
 

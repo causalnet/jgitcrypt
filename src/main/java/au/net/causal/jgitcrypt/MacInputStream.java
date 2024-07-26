@@ -1,15 +1,15 @@
 package au.net.causal.jgitcrypt;
 
 import javax.crypto.Mac;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Objects;
 
 /**
  * Input stream that maintains a digital signature of all data that is read from it.
  */
-public abstract class MacInputStream extends VerifiableInputStream
+public class MacInputStream extends FilterInputStream
 {
     private final Mac mac;
 
@@ -19,7 +19,7 @@ public abstract class MacInputStream extends VerifiableInputStream
      * @param in the underlying input stream.
      * @param mac the MAC to use for reading all data from this stream.
      */
-    protected MacInputStream(InputStream in, Mac mac)
+    public MacInputStream(InputStream in, Mac mac)
     {
         super(in);
         this.mac = Objects.requireNonNull(mac);
@@ -62,25 +62,4 @@ public abstract class MacInputStream extends VerifiableInputStream
     {
         return mac;
     }
-
-    @Override
-    public void verify() throws VerificationException, IOException
-    {
-        //Read to end of stream
-        transferTo(OutputStream.nullOutputStream());
-
-        //Verify signature
-        byte[] digest = mac.doFinal();
-        checkSignature(digest);
-    }
-
-    /**
-     * Checks the digital signature read from the stream against an expected value.
-     *
-     * @param streamDigest the digest of the data read from this stream to check.
-     *
-     * @throws VerificationException if the stream digest does not match an expected value.
-     */
-    protected abstract void checkSignature(byte[] streamDigest)
-    throws VerificationException;
 }
