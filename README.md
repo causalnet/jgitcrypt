@@ -20,11 +20,11 @@ Use its `encode()` and `decode()` methods to encrypt or decrypt files.
 Use `GitcryptKey.load()` to load a git-crypt key file which is used when
 encrypting and decrypting files.
 
-## Command Line Tool
+### Command Line Tool
 
 Use `java -jar jgitcrypt.jar` along with command line arguments:
 
-### decrypt
+#### decrypt
 
 `decrypt <keyfile> <inputfile> <outputfile>`
 
@@ -33,7 +33,7 @@ the specified keyfile.  If <outputfile> is not specified, the decrypted file
 will be sent to standard output.  If <inputfile> is not specified, it will be
 read from standard input.
 
-### encrypt
+#### encrypt
 
 `encrypt <keyfile> <inputfile> <outputfile>`
 
@@ -41,11 +41,25 @@ will encrypt an input file using a git-crypt key.  If <outputfile> is not specif
 standard output is used.  If <inputfile> is not specified, standard input will be used
 as the source.
 
-### generatekey
+#### generatekey
 
 `generatekey <keyfile>`
 
 creates a new random git-crypt key and saves it to a file.
+
+## Downloading
+
+JGitcrypt can be downloaded from Maven central, either 
+[directly](https://repo1.maven.org/maven2/au/net/causal/jgitcrypt/jgitcrypt/1.0/jgitcrypt-1.0.jar) 
+or in a Maven project using GAV co-ordinates:
+
+```
+<dependency>
+    <groupId>au.net.causal.jgitcrypt</groupId>
+    <artifactId>jgitcrypt</artifactId>
+    <version>1.0</version>
+</dependency>
+```
 
 ## Compatibility with git-crypt
 
