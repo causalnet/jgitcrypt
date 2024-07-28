@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>au.net.causal.jgitcrypt</groupId>
 	<artifactId>jgitcrypt</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>JGitcrypt</name>
 
 	<properties>
@@ -39,7 +39,8 @@
 		<connection>scm:git:git@github.com:causalnet/jgitcrypt.git</connection>
 		<developerConnection>scm:git:git@github.com:causalnet/jgitcrypt.git</developerConnection>
 		<url>https://github.com/causalnet/jgitcrypt</url>
-	</scm>
+	  <tag>jgitcrypt-1.0</tag>
+  </scm>
 
 	<distributionManagement>
 		<snapshotRepository>
