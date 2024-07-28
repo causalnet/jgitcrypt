@@ -6,6 +6,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Simple command line tool that can generate keys, encrypt, and decrypt files.
+ */
 public class JGitcryptApp
 {
     public static void main(String... args)
@@ -40,6 +43,14 @@ public class JGitcryptApp
         System.err.println("    (if keyfile not specified, uses stdout)");
     }
 
+    /**
+     * Converts arg at the specified index to a file, or exits with a usage message if the index is out of range.
+     *
+     * @param args args array.
+     * @param argIndex index of arg to use.
+     *
+     * @return the file at the specified arg index.
+     */
     private static Path requiredArgToFile(String[] args, int argIndex)
     {
         if (argIndex >= args.length)
@@ -50,6 +61,14 @@ public class JGitcryptApp
         return argToFile(args, argIndex);
     }
 
+    /**
+     * Converts arg at the specified index to a file, or null if the index is out of range.
+     *
+     * @param args args array.
+     * @param argIndex index of arg to use.
+     *
+     * @return the file at the specified arg index or null.
+     */
     private static Path argToFile(String[] args, int argIndex)
     {
         if (argIndex >= args.length)
@@ -58,6 +77,16 @@ public class JGitcryptApp
         return Path.of(args[argIndex]);
     }
 
+    /**
+     * Decrypts a file.
+     *
+     * @param keyFile gitcrypt keyfile to use.
+     * @param inputFile encrypted file to decrypt.  If null, will use System.in.
+     * @param outputFile decrypted file to write.  If null, will use System.out.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @throws GitcryptSecurityException if Java security does not have providers set up for Gitcrypt.
+     */
     public void decrypt(Path keyFile, Path inputFile, Path outputFile)
     throws IOException, GitcryptSecurityException
     {
@@ -75,6 +104,16 @@ public class JGitcryptApp
         }
     }
 
+    /**
+     * Encrypts a file.
+     *
+     * @param keyFile gitcrypt keyfile to use.
+     * @param inputFile file to encrypt.  If null, will use System.in.
+     * @param outputFile encrypted file to write.  If null, will use System.out.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @throws GitcryptSecurityException if Java security does not have providers set up for Gitcrypt.
+     */
     public void encrypt(Path keyFile, Path inputFile, Path outputFile)
     throws IOException, GitcryptSecurityException
     {
@@ -91,6 +130,14 @@ public class JGitcryptApp
         }
     }
 
+    /**
+     * Generates a new gitcrypt key file.
+     *
+     * @param keyFile the key file to generate.  If null, will use System.out.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @throws GitcryptSecurityException if Java security does not have providers set up for Gitcrypt.
+     */
     public void generateKey(Path keyFile)
     throws IOException, GitcryptSecurityException
     {
@@ -101,6 +148,9 @@ public class JGitcryptApp
         }
     }
 
+    /**
+     * Creates an input stream for a file, or if it is null uses System.in.
+     */
     private InputStream inputStreamForArg(Path path)
     throws IOException
     {
@@ -110,6 +160,9 @@ public class JGitcryptApp
             return Files.newInputStream(path);
     }
 
+    /**
+     * Creates an output stream for a file, or if it is null uses System.out.
+     */
     private OutputStream outputStreamForArg(Path path)
     throws IOException
     {

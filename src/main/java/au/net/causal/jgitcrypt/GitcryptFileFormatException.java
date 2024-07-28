@@ -2,6 +2,9 @@ package au.net.causal.jgitcrypt;
 
 import java.io.IOException;
 
+/**
+ * Thrown when a gitcrypt file (key or encrypted file) does not have a known valid format.
+ */
 public class GitcryptFileFormatException extends IOException
 {
     public GitcryptFileFormatException()
