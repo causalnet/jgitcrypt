@@ -1,9 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>au.net.causal.jgitcrypt</groupId>
-	<artifactId>jgitcrypt</artifactId>
+	<artifactId>jgitcrypt-parent</artifactId>
 	<version>1.1-SNAPSHOT</version>
-	<name>JGitcrypt</name>
+	<name>JGitcrypt parent</name>
+	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,8 +40,8 @@
 		<connection>scm:git:git@github.com:causalnet/jgitcrypt.git</connection>
 		<developerConnection>scm:git:git@github.com:causalnet/jgitcrypt.git</developerConnection>
 		<url>https://github.com/causalnet/jgitcrypt</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -65,171 +66,68 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>org.eclipse.jgit</groupId>
+				<artifactId>org.eclipse.jgit</artifactId>
+				<version>6.10.0.202406032230-r</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-launcher</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.jgit</groupId>
-			<artifactId>org.eclipse.jgit</artifactId>
-			<version>6.10.0.202406032230-r</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.13.0</version>
+					<configuration>
+						<source>${java.compile.version}</source>
+						<target>${java.compile.version}</target>
+						<release>${java.compile.version}</release>
+						<parameters>true</parameters>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.44.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.5.0</version>					
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.4.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
-				<configuration>
-					<source>${java.compile.version}</source>
-					<target>${java.compile.version}</target>
-					<release>${java.compile.version}</release>
-					<parameters>true</parameters>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.44.0</version>
-				<executions>
-					<execution>
-						<id>verify-with-docker</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>build</goal>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<createContainers>true</createContainers>
-							<images>
-								<image>
-									<alias>docker-verifier</alias>
-									<name>causalnet/jgitcrypt-verifier:${project.version}</name>
-									<build>
-										<dockerFile>${project.basedir}/src/test/docker/verifier/Dockerfile</dockerFile>
-										<contextDir>${project.build.directory}/verifier-docker-data</contextDir>
-										<useDefaultExcludes>false</useDefaultExcludes>
-									</build>
-									<copy>
-										<entries>
-											<entry>
-												<containerPath>/results</containerPath>
-												<hostDirectory>${project.build.directory}/docker-results</hostDirectory>
-											</entry>
-										</entries>
-									</copy>
-								</image>
-							</images>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.6.0</version>
-				<executions>
-					<execution>
-						<id>add-docker-results-resources</id>
-						<phase>generate-test-resources</phase>
-						<goals>
-							<goal>add-test-resource</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>${project.build.directory}/docker-results</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Needs to run again, later in the build lifecycle to catch docker's generated test results -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>docker-results-resources</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>testResources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.3.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>integration-test-predocker</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>**/IT*.java</include>
-								<include>**/*IT.java</include>
-							</includes>
-							<summaryFile>target/failsafe-reports/failsafe-summary-predocker.xml</summaryFile>
-						</configuration>
-					</execution>
-					<execution>
-						<id>integration-test-postdocker</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-						<phase>post-integration-test</phase>
-						<configuration>
-							<includes>
-								<include>**/Verify*.java</include>
-								<include>**/*Verify.java</include>
-							</includes>
-							<summaryFile>target/failsafe-reports/failsafe-summary-postdocker.xml</summaryFile>
-						</configuration>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<summaryFiles>
-								<summaryFile>target/failsafe-reports/failsafe-summary-predocker.xml</summaryFile>
-								<summaryFile>target/failsafe-reports/failsafe-summary-postdocker.xml</summaryFile>
-							</summaryFiles>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -259,52 +157,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.5.0</version>
-				<executions>
-					<execution>
-						<id>enforce-bytecode-version</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<enforceBytecodeVersion>
-									<maxJdkVersion>${java.compile.version}</maxJdkVersion>
-								</enforceBytecodeVersion>
-							</rules>
-							<fail>true</fail>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>extra-enforcer-rules</artifactId>
-						<version>1.8.0</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>au.net.causal.jgitcrypt.JGitcryptApp</mainClass>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -321,11 +173,16 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>3.1.1</version>
 				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<releaseProfiles>release</releaseProfiles>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<modules>
+		<module>jgitcrypt</module>
+	</modules>
 
 	<profiles>
 		<!-- Only make GPG signatures during release -->
@@ -344,78 +201,6 @@
 								<goals>
 									<goal>sign</goal>
 								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>generate-test-data</id>
-			<activation>
-				<property>
-					<name>docker.testdata</name>
-					<value>!false</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>generate-test-data</id>
-								<phase>generate-test-resources</phase>
-								<goals>
-									<goal>build</goal>
-									<goal>copy</goal>
-								</goals>
-								<configuration>
-									<createContainers>true</createContainers>
-									<images>
-										<image>
-											<alias>test-data-generator</alias>
-											<name>causalnet/jgitcrypt-test-data-generator:${project.version}</name>
-											<build>
-												<dockerFile>${project.basedir}/src/test/docker/testdatagenerator/Dockerfile</dockerFile>
-											</build>
-											<copy>
-												<entries>
-													<entry>
-														<containerPath>/testrepo/secrets.txt</containerPath>
-														<hostDirectory>${project.build.directory}/test-data/testrepo</hostDirectory>
-													</entry>
-													<entry>
-														<containerPath>/gitcryptkey/thekey</containerPath>
-														<hostDirectory>${project.build.directory}/test-data/testkey</hostDirectory>
-													</entry>
-												</entries>
-											</copy>
-										</image>
-									</images>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>add-test-data-resource</id>
-								<phase>generate-test-resources</phase>
-								<goals>
-									<goal>add-test-resource</goal>
-								</goals>
-								<configuration>
-									<resources>
-										<resource>
-											<directory>${project.build.directory}/test-data</directory>
-										</resource>
-									</resources>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>
