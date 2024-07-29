@@ -182,6 +182,7 @@
 
 	<modules>
 		<module>jgitcrypt</module>
+		<module>jgitcrypt-maven-plugin</module>
 	</modules>
 
 	<profiles>
