@@ -1,7 +1,10 @@
 package au.net.causal.maven.plugins.jgitcrypt;
 
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -46,6 +49,18 @@ public class CopyDataToClipboardAsBase64OutputStream extends OutputStream
     {
         String base64Data = Base64.getEncoder().encodeToString(data);
         StringSelection stringSelection = new StringSelection(base64Data);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, stringSelection);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, stringSelection);
+
+        //On some Linux platforms there is a situation where if the process terminates too early the clipboard is not preserved
+        //If we read the clipboard back - this will wait for the selection notification (see see sun.awt.x11.XSelection) which fixes this
+        try
+        {
+            clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
+        }
+        catch (IOException | UnsupportedFlavorException e)
+        {
+            //Ignore any errors, this is just for waiting
+        }
     }
 }
