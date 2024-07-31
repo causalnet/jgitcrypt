@@ -39,7 +39,7 @@ public class EncryptMojo extends AbstractEncryptFileMojo
     {
         getLog().info("Encrypting " + sourceFile.getAbsolutePath() +
                 " to " + targetFile.getAbsolutePath() +
-                " using key " + keyFile.getAbsolutePath());
+                " using key " + getGitcryptKeyLocationDescription());
 
         if (!sourceFile.exists())
             throw new MojoExecutionException("File to encrypt " + sourceFile + " not found.");

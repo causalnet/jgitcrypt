@@ -46,7 +46,7 @@ public class DecryptToClipboardMojo extends AbstractDecryptFileMojo
 
         getLog().info("Decrypting " + sourceFile.getAbsolutePath() +
                 " to clipboard using key " +
-                keyFile.getAbsolutePath());
+                getGitcryptKeyLocationDescription());
 
         super.execute();
 

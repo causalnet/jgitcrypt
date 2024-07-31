@@ -7,12 +7,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Base64;
+import java.io.OutputStream;
 
 @Mojo(name="generate-key-to-clipboard")
 public class GenerateKeyToClipboardMojo extends AbstractMojo
@@ -27,19 +23,10 @@ public class GenerateKeyToClipboardMojo extends AbstractMojo
             //Generate random key
             GitcryptKey key = GitcryptKey.generate();
 
-            //Get base64 string of key
-            byte[] keyData;
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream())
+            try (OutputStream os = new CopyDataToClipboardAsBase64OutputStream())
             {
                 key.write(os);
-                keyData = os.toByteArray();
             }
-            String keyDataEncoded = Base64.getEncoder().encodeToString(keyData);
-
-            //Copy to clipboard
-            StringSelection selection = new StringSelection(keyDataEncoded);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(selection, selection);
         }
         catch (GitcryptSecurityException | IOException e)
         {

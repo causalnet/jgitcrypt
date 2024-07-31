@@ -43,7 +43,7 @@ public class EncryptFromClipboardMojo extends AbstractEncryptFileMojo
     {
         getLog().info("Encrypting from clipboard to " +
                 targetFile.getAbsolutePath() + " using key " +
-                keyFile.getAbsolutePath());
+                getGitcryptKeyLocationDescription());
 
         super.execute();
     }

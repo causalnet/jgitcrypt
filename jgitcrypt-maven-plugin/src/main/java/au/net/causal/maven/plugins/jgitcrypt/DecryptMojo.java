@@ -38,7 +38,7 @@ public class DecryptMojo extends AbstractDecryptFileMojo
     {
         getLog().info("Decrypting " + sourceFile.getAbsolutePath() +
                 " to " + targetFile.getAbsolutePath() +
-                " using key " + keyFile.getAbsolutePath());
+                " using key " + getGitcryptKeyLocationDescription());
 
         if (!sourceFile.exists())
             throw new MojoExecutionException("File to decrypt " + sourceFile + " not found.");

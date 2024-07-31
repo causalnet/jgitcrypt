@@ -38,7 +38,7 @@ public class EncryptToClipboardMojo extends AbstractEncryptFileMojo
     {
         getLog().info("Encrypting " + sourceFile.getAbsolutePath() +
                 " to clipboard (in base64) using key " +
-                keyFile.getAbsolutePath());
+                getGitcryptKeyLocationDescription());
 
         if (!sourceFile.exists())
             throw new MojoExecutionException("File to encrypt " + sourceFile + " not found.");
