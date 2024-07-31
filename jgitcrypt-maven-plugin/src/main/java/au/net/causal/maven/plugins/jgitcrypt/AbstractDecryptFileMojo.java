@@ -20,8 +20,8 @@ public abstract class AbstractDecryptFileMojo extends AbstractMojo
     @Parameter(property = "jgitcrypt.key.file", defaultValue = "${project.build.directory}/gitcrypt.key", required = true)
     protected File keyFile;
 
-    @Parameter(property = "jgitcrypt.source.file", required = true)
-    protected File sourceFile;
+    protected abstract InputStream sourceInputStream()
+    throws IOException;
 
     protected abstract OutputStream targetOutputStream()
     throws IOException;
@@ -31,8 +31,6 @@ public abstract class AbstractDecryptFileMojo extends AbstractMojo
     {
         if (!keyFile.exists())
             throw new MojoExecutionException("Key file " + keyFile.getAbsolutePath() + " not found.");
-        if (!sourceFile.exists())
-            throw new MojoExecutionException("File to decrypt " + sourceFile + " not found.");
 
         //Load the key
         GitcryptKey key;
@@ -47,7 +45,7 @@ public abstract class AbstractDecryptFileMojo extends AbstractMojo
 
         GitcryptDecoder decoder = new GitcryptDecoder(key);
 
-        try (VerifiableInputStream decryptIs = decoder.decode(Files.newInputStream(sourceFile.toPath()));
+        try (VerifiableInputStream decryptIs = decoder.decode(sourceInputStream());
              OutputStream os = targetOutputStream())
         {
             decryptIs.transferTo(os);
