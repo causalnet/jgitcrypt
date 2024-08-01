@@ -4,6 +4,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class EncryptMojo extends AbstractEncryptFileMojo
     protected OutputStream targetOutputStream()
     throws IOException
     {
+        FileUtils.forceMkdir(targetFile.getParentFile());
         return Files.newOutputStream(targetFile.toPath());
     }
 
