@@ -10,6 +10,7 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,6 +21,9 @@ import java.util.Base64;
 
 public abstract class AbstractKeyBasedMojo extends AbstractMojo
 {
+    @Parameter(property = "jgitcrypt.key.base64")
+    private String keyBase64;
+
     @Parameter(property = "jgitcrypt.key.serverId")
     private String keyServerId;
 
@@ -34,17 +38,32 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
 
     protected String getGitcryptKeyLocationDescription()
     {
-        if (keyServerId != null)
+        if (keyBase64 != null)
+            return "from property";
+        else if (keyServerId != null)
             return "from Maven settings (server '" + keyServerId + "')";
-
-        return keyFile.getAbsolutePath();
+        else
+            return keyFile.getAbsolutePath();
     }
 
     protected GitcryptKey loadGitcryptKey()
     throws MojoExecutionException
     {
         byte[] keyBytes;
-        if (keyServerId != null)
+
+        if (StringUtils.isNotBlank(keyBase64))
+        {
+            try
+            {
+                keyBytes = Base64.getDecoder().decode(keyBase64);
+            }
+            catch (IllegalArgumentException e)
+            {
+                //Do not use this as cause since it might contain password
+                throw new MojoExecutionException("Failed to base64 decode git-crypt key from property.");
+            }
+        }
+        else if (StringUtils.isNotBlank(keyServerId))
         {
             Server server = mavenSession.getSettings().getServer(keyServerId);
             if (server == null)
