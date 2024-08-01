@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>@project.groupId@</groupId>
+    <artifactId>it-multifile</artifactId>
+    <version>@project.version@</version>
+
+    <name>Multi-file Test</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>generate-key</id>
+                        <goals>
+                            <goal>generate-key</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>encrypt-files</id>
+                        <goals>
+                            <goal>encrypt-files</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.basedir}</directory>
+                                    <targetDirectory>${project.build.directory}/encrypted</targetDirectory>
+                                    <includes>
+                                        <include>sample*.txt</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>decrypt-files</id>
+                        <goals>
+                            <goal>decrypt-files</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}/encrypted</directory>
+                                    <targetDirectory>${project.build.directory}/decrypted</targetDirectory>
+                                    <includes>
+                                        <include>sample*.txt</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

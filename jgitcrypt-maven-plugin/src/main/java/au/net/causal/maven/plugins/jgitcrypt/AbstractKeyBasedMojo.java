@@ -27,7 +27,7 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
     private File keyFile;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession mavenSession;
+    protected MavenSession mavenSession;
 
     @Component
     private SettingsDecrypter settingsDecrypter;
