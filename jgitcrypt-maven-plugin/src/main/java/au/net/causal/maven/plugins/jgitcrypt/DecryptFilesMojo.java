@@ -18,9 +18,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Decrypt multiple git-crypt encrypted files.  Original, encrypted files are not modified, but decrypted files are
+ * saved to another directory.
+ */
 @Mojo(name="decrypt-files")
 public class DecryptFilesMojo extends AbstractKeyBasedMojo
 {
+    /**
+     * Files to decrypt and where to decrypt them to.
+     */
     @Parameter(required = true)
     private List<FileSet> fileSets = new ArrayList<>();
 

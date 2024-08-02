@@ -14,9 +14,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+/**
+ * Generates a new randomly generated git-crypt key and saves it to file.
+ */
 @Mojo(name="generate-key")
 public class GenerateKeyMojo extends AbstractMojo
 {
+    /**
+     * The key file to write.  If it already exists, this file is overwritten.
+     */
     @Parameter(property = "jgitcrypt.key.file", defaultValue = "${project.build.directory}/gitcrypt.key", required = true)
     protected File keyFile;
 

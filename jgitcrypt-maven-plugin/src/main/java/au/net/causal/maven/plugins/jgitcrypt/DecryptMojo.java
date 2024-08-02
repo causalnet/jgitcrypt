@@ -12,12 +12,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+/**
+ * Decrypt a single git-crypt encrypted file.  Original encrypted file is not modified, rather the decrypted data is written
+ * to a separate target file.
+ */
 @Mojo(name="decrypt")
 public class DecryptMojo extends AbstractDecryptFileMojo
 {
+    /**
+     * The file to decrypt.
+     */
     @Parameter(property = "jgitcrypt.source.file", required = true)
     protected File sourceFile;
 
+    /**
+     * Decrypted data is written to this file.  Will be overwritten if it already exists.
+     */
     @Parameter(property = "jgitcrypt.target.file", required = true)
     protected File targetFile;
 

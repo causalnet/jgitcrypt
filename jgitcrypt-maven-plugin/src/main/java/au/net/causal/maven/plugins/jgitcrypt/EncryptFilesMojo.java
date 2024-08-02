@@ -18,9 +18,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Encrypt multiple files.  Original files are not modified, but encrypted files are
+ * saved to another directory.
+ */
 @Mojo(name="encrypt-files")
 public class EncryptFilesMojo extends AbstractKeyBasedMojo
 {
+    /**
+     * Files to encrypt and where to encrypt them to.
+     */
     @Parameter(required = true)
     private List<FileSet> fileSets = new ArrayList<>();
 

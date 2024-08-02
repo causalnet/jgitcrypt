@@ -11,11 +11,19 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+/**
+ * An output stream that saves its content to the user clipboard as text when closed.
+ */
 public class CopyDataToClipboardAsTextOutputStream extends OutputStream
 {
     private final Charset charset;
     private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
+    /**
+     * Creates a clipboard output stream.
+     *
+     * @param charset the character set used to decode byte data written to this stream when copying to the clipboard as a string.
+     */
     public CopyDataToClipboardAsTextOutputStream(Charset charset)
     {
         this.charset = Objects.requireNonNull(charset);
@@ -45,14 +53,24 @@ public class CopyDataToClipboardAsTextOutputStream extends OutputStream
         buffer.flush();
     }
 
+    /**
+     * Closes the stream and saves any content written to it to the clipboard.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void close() throws IOException
     {
         buffer.close();
-        copyToClipboardBase64(buffer.toByteArray());
+        copyToClipboardAsString(buffer.toByteArray());
     }
 
-    private void copyToClipboardBase64(byte[] data)
+    /**
+     * Saves data written to this stream to the clipboard as a string.
+     *
+     * @param data the data to save.
+     */
+    private void copyToClipboardAsString(byte[] data)
     {
         String stringData = new String(data, charset);
         StringSelection stringSelection = new StringSelection(stringData);

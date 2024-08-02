@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines a set of files from a base directory specified by inclusion and exclusion patterns in Maven/Ant format along with a target directory.
+ */
 public class FileSet
 {
     private File directory;
@@ -11,6 +14,9 @@ public class FileSet
     private final List<String> includes = new ArrayList<>();
     private final List<String> excludes = new ArrayList<>();
 
+    /**
+     * @return the directory containing the files.
+     */
     public File getDirectory()
     {
         return directory;
@@ -21,6 +27,9 @@ public class FileSet
         this.directory = directory;
     }
 
+    /**
+     * @return the target directory where processed files are saved to.
+     */
     public File getTargetDirectory()
     {
         return targetDirectory;
@@ -31,6 +40,9 @@ public class FileSet
         this.targetDirectory = targetDirectory;
     }
 
+    /**
+     * @return Ant/Maven patterns that define which files should be included.  If not specified, all files are included.
+     */
     public List<String> getIncludes()
     {
         return includes;
@@ -42,6 +54,9 @@ public class FileSet
         this.includes.addAll(includes);
     }
 
+    /**
+     * @return Ant/Maven patterns that define which of the included files should be excluded.
+     */
     public List<String> getExcludes()
     {
         return excludes;

@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
 
+/**
+ * An output stream that saves its content to the user clipboard as a base64-encoded string when closed.
+ */
 public class CopyDataToClipboardAsBase64OutputStream extends OutputStream
 {
     private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -38,6 +41,11 @@ public class CopyDataToClipboardAsBase64OutputStream extends OutputStream
         buffer.flush();
     }
 
+    /**
+     * Closes the stream and saves any content written to it to the clipboard.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void close() throws IOException
     {
@@ -45,6 +53,11 @@ public class CopyDataToClipboardAsBase64OutputStream extends OutputStream
         copyToClipboardBase64(buffer.toByteArray());
     }
 
+    /**
+     * Base-64 encodes data and saves it to the clipboard as a string.
+     *
+     * @param data the data to save.
+     */
     private void copyToClipboardBase64(byte[] data)
     {
         String base64Data = Base64.getEncoder().encodeToString(data);

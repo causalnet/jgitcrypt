@@ -10,6 +10,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Generates a new randomly generated git-crypt key and saves it to the clipboard as a base64 encoded string.
+ * This can be used to avoid saving sensitive keys to the file system.  The data from the clipboard can then be
+ * pasted/saved to a password manager or passed to an encryptor (such as mvn -ep) and the result saved in Maven settings.
+ */
 @Mojo(name="generate-key-to-clipboard")
 public class GenerateKeyToClipboardMojo extends AbstractMojo
 {

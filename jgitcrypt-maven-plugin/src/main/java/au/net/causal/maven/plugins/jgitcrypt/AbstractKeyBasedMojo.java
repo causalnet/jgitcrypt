@@ -19,14 +19,29 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Base64;
 
+/**
+ * Abstract mojo that uses a git-crypt key.  The key may be sourced from either a base-64 encoded property value,
+ * a base64-encoded value read from a server password in the user's settings, a private key file defined in a server in the user's settings,
+ * or a key file specified by property.  Only one of these three settings should be defined.
+ */
 public abstract class AbstractKeyBasedMojo extends AbstractMojo
 {
+    /**
+     * The base-64 encoded git-crypt key used for encryption and decryption.
+     */
     @Parameter(property = "jgitcrypt.key.base64")
     private String keyBase64;
 
+    /**
+     * The ID of a server entry in the user settings.  If a password is defined for this server, it is base64 decoded and interpreted as a
+     * git-crypt key.  If a private key file is defined for this server, then this is read as the git-crypt key.
+     */
     @Parameter(property = "jgitcrypt.key.serverId")
     private String keyServerId;
 
+    /**
+     * A git-crypt key file to use for encryption and decryption.
+     */
     @Parameter(property = "jgitcrypt.key.file", defaultValue = "${project.build.directory}/gitcrypt.key")
     private File keyFile;
 
@@ -36,6 +51,9 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
     @Component
     private SettingsDecrypter settingsDecrypter;
 
+    /**
+     * @return a textual description of the key location, used for log messages.
+     */
     protected String getGitcryptKeyLocationDescription()
     {
         if (keyBase64 != null)
@@ -46,6 +64,13 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
             return keyFile.getAbsolutePath();
     }
 
+    /**
+     * Loads the git-crypt key using one of the key properties.
+     *
+     * @return the loaded git-crypt key.
+     *
+     * @throws MojoExecutionException if an error occurs loading the key, or no key is found or defined.
+     */
     protected GitcryptKey loadGitcryptKey()
     throws MojoExecutionException
     {

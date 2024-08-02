@@ -11,11 +11,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Decrypt a single file, subclasses define source and target as streams.
+ */
 public abstract class AbstractDecryptFileMojo extends AbstractKeyBasedMojo
 {
+    /**
+     * Stream of encrypted data to decrypt.
+     */
     protected abstract InputStream sourceInputStream()
     throws IOException;
 
+    /**
+     * Stream to write decrypted data to.
+     */
     protected abstract OutputStream targetOutputStream()
     throws IOException;
 

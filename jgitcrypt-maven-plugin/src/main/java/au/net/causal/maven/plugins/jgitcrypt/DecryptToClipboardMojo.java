@@ -13,15 +13,30 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+/**
+ * Decrypt a single git-crypt encrypted file to the user's clipboard.  This can be used to avoid saving any decrypted data to
+ * disk.  The file being decrypted should be a text file.
+ */
 @Mojo(name="decrypt-to-clipboard")
 public class DecryptToClipboardMojo extends AbstractDecryptFileMojo
 {
+    /**
+     * The file to decrypt.
+     */
     @Parameter(property = "jgitcrypt.source.file", required = true)
     protected File sourceFile;
 
+    /**
+     * If specified, wait for this many milliseconds after saving the decrypted data to the clipboard before continuing.  This may be used
+     * to work around problems on some platforms where clipboard data is not saved if a process terminates too quickly after copying.
+     */
     @Parameter(property = "jgitcrypt.clipboard.waitTimeMillis")
     private Long clipboardWaitTimeMillis;
 
+    /**
+     * Encoding to use for converting decrypted data to text.  Defaults to using the project's source encoding, or if that is not defined, uses
+     * UTF-8.
+     */
     @Parameter(property = "jgitcrypt.textEncoding", defaultValue = "${project.build.sourceEncoding}", required = true)
     private String textEncoding;
 

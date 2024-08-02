@@ -11,12 +11,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+/**
+ * Encrypts a file onto the user's clipboard as a base64 encoded string.
+ */
 @Mojo(name="encrypt-to-clipboard")
 public class EncryptToClipboardMojo extends AbstractEncryptFileMojo
 {
+    /**
+     * The file to encrypt.
+     */
     @Parameter(property = "jgitcrypt.source.file", required = true)
     protected File sourceFile;
 
+    /**
+     * If specified, wait for this many milliseconds after saving the encrypted data to the clipboard before continuing.  This may be used
+     * to work around problems on some platforms where clipboard data is not saved if a process terminates too quickly after copying.
+     */
     @Parameter(property = "jgitcrypt.clipboard.waitTimeMillis")
     private Long clipboardWaitTimeMillis;
 
