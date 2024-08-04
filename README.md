@@ -47,6 +47,10 @@ as the source.
 
 creates a new random git-crypt key and saves it to a file.
 
+### Maven Plugin
+
+[See JGitcrypt Maven Plugin documentation](jgitcrypt-maven-plugin/README.md)
+
 ## Downloading
 
 JGitcrypt can be downloaded from Maven central, either 
