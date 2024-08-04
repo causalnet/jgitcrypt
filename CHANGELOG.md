@@ -1,7 +1,7 @@
 # Change Log
 
 ### 1.1
-unreleased
+2024-08-04
 
 - Maven plugin added
 
