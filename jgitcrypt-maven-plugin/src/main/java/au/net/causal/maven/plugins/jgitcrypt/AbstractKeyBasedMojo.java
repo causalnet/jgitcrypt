@@ -6,6 +6,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.crypto.DefaultSettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecrypter;
@@ -40,28 +41,43 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
     private String keyServerId;
 
     /**
-     * A git-crypt key file to use for encryption and decryption.
+     * A git-crypt key file to use for encryption and decryption.  If no other key properties are configured and running with a project,
+     * the default is ${project.build.directory}/gitcrypt.key.
      */
-    @Parameter(property = "jgitcrypt.key.file", defaultValue = "${project.build.directory}/gitcrypt.key")
+    @Parameter(property = "jgitcrypt.key.file")
     private File keyFile;
 
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession mavenSession;
 
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
+
     @Component
     private SettingsDecrypter settingsDecrypter;
+
+    private void configureDefaults()
+    {
+        //Default key file if running with a real project
+        if (keyBase64 == null && keyServerId == null && keyFile == null && project != null && project.getFile() != null && project.getFile().exists())
+            keyFile = new File(new File(project.getBuild().getDirectory()), "gitcrypt.key");
+    }
 
     /**
      * @return a textual description of the key location, used for log messages.
      */
     protected String getGitcryptKeyLocationDescription()
     {
+        configureDefaults();
+
         if (keyBase64 != null)
             return "from property";
         else if (keyServerId != null)
             return "from Maven settings (server '" + keyServerId + "')";
-        else
+        else if (keyFile != null)
             return keyFile.getAbsolutePath();
+        else
+            return "<key not specified>";
     }
 
     /**
@@ -74,6 +90,8 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
     protected GitcryptKey loadGitcryptKey()
     throws MojoExecutionException
     {
+        configureDefaults();
+
         byte[] keyBytes;
 
         if (StringUtils.isNotBlank(keyBase64))
@@ -134,7 +152,7 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         }
-        else //Load from file
+        else if (keyFile != null) //Load from file
         {
             if (!keyFile.exists())
                 throw new MojoExecutionException("Key file " + keyFile.getAbsolutePath() + " not found.");
@@ -148,5 +166,7 @@ public abstract class AbstractKeyBasedMojo extends AbstractMojo
                 throw new MojoExecutionException(e.getMessage(), e);
             }
         }
+        else
+            throw new MojoExecutionException("No gitcrypt key configured.  Use properties jgitcrypt.key.base64, jgitcrypt.key.serverId or jgitcrypt.key.file (or keyBase64, keyServerId, keyFile in mojo configuration).");
     }
 }

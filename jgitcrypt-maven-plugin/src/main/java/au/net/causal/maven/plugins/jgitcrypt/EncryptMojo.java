@@ -16,7 +16,7 @@ import java.nio.file.Files;
  * Encrypts a single file.  The original source file is not modified, rather the encrypted data is written to
  * a separate file.
  */
-@Mojo(name="encrypt", aggregator = true)
+@Mojo(name="encrypt", aggregator = true, requiresProject = false)
 public class EncryptMojo extends AbstractEncryptFileMojo
 {
     /**

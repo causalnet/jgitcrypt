@@ -7,7 +7,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.IOException;
@@ -30,9 +29,6 @@ public class EncryptFilesMojo extends AbstractKeyBasedMojo
      */
     @Parameter(required = true)
     private List<FileSet> fileSets = new ArrayList<>();
-
-    @Parameter(defaultValue = "${project}", readonly = true)
-    protected MavenProject project;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException

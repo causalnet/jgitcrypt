@@ -14,7 +14,7 @@ import java.nio.file.Files;
 /**
  * Encrypts a file onto the user's clipboard as a base64 encoded string.
  */
-@Mojo(name="encrypt-to-clipboard", aggregator = true)
+@Mojo(name="encrypt-to-clipboard", aggregator = true, requiresProject = false)
 public class EncryptToClipboardMojo extends AbstractEncryptFileMojo
 {
     /**
