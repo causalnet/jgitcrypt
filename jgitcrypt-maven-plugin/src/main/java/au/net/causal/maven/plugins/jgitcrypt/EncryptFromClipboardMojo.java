@@ -19,7 +19,7 @@ import java.nio.file.Files;
  * disk.  Only works with clipboard content in text form, will fail if there is no clipboard data or clipboard data is
  * not text.
  */
-@Mojo(name="encrypt-from-clipboard")
+@Mojo(name="encrypt-from-clipboard", aggregator = true)
 public class EncryptFromClipboardMojo extends AbstractEncryptFileMojo
 {
     /**

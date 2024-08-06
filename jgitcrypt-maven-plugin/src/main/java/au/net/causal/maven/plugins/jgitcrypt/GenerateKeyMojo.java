@@ -17,7 +17,7 @@ import java.nio.file.Files;
 /**
  * Generates a new randomly generated git-crypt key and saves it to file.
  */
-@Mojo(name="generate-key")
+@Mojo(name="generate-key", aggregator = true)
 public class GenerateKeyMojo extends AbstractMojo
 {
     /**

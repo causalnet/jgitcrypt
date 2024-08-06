@@ -17,7 +17,7 @@ import java.nio.file.Files;
  * Decrypt a single git-crypt encrypted file to the user's clipboard.  This can be used to avoid saving any decrypted data to
  * disk.  The file being decrypted should be a text file.
  */
-@Mojo(name="decrypt-to-clipboard")
+@Mojo(name="decrypt-to-clipboard", aggregator = true)
 public class DecryptToClipboardMojo extends AbstractDecryptFileMojo
 {
     /**

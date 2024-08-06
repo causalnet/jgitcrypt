@@ -16,7 +16,7 @@ import java.nio.file.Files;
  * Decrypt a single git-crypt encrypted file.  Original encrypted file is not modified, rather the decrypted data is written
  * to a separate target file.
  */
-@Mojo(name="decrypt")
+@Mojo(name="decrypt", aggregator = true)
 public class DecryptMojo extends AbstractDecryptFileMojo
 {
     /**
