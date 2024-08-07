@@ -1,7 +1,7 @@
 # Change Log
 
 ### 1.2
-unreleased
+2024-08-07
 
 - Make Maven plugin goals designed for command line invocation to be aggregate
   so that they don't recurse into subprojects
