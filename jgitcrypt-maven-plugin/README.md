@@ -38,13 +38,13 @@ For the encryption/decryption goals, a key must be configured in one of these wa
 #### Generate a new key to file
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:generate-key -Djgitcrypt.key.file=key-to-generate.key
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:generate-key -Djgitcrypt.key.file=key-to-generate.key
 ```
 
 #### Generate a new key to clipboard in base64
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:generate-key-to-clipboard
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:generate-key-to-clipboard
 ```
 
 Then you can paste this key into a password manager or settings or 
@@ -56,7 +56,7 @@ Encrypt a file named `secret-stuff.properties` into the `encrypted` directory
 using the key `my-key.key`.
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:encrypt -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secret-stuff.properties -Djgitcrypt.target.file=encrypted/secret-stuff.properties
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:encrypt -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secret-stuff.properties -Djgitcrypt.target.file=encrypted/secret-stuff.properties
 ```
 
 #### Decrypt a file
@@ -65,7 +65,7 @@ Decrypt an encrypted file named `secrets.properties` into the `decrypted` direct
 using the key `my-key.key`.
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:decrypt -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secrets.properties -Djgitcrypt.target.file=decrypted/secrets.properties
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:decrypt -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secrets.properties -Djgitcrypt.target.file=decrypted/secrets.properties
 ```
 
 #### Decrypt a text file to the clipboard
@@ -74,7 +74,7 @@ It is possible to decrypt a file without ever writing it to disk and placing its
 form onto the clipboard instead.  Only works properly with text files.
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:decrypt-to-clipboard -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secrets.properties
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:decrypt-to-clipboard -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.source.file=secrets.properties
 ```
 
 #### Encrypt a text file from the clipboard
@@ -82,7 +82,7 @@ mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:decrypt-to-clipboard -Dgi
 Once finished editing, the clipboard contents can be encrypted back to disk.
 
 ```
-mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.1:encrypt-from-clipboard -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.target.file=secrets.properties
+mvn au.net.causal.jgitcrypt:jgitcrypt-maven-plugin:1.2:encrypt-from-clipboard -Dgitcrypt.key.file=/${user.home}/git-crypt-keys/my-key.key -Djgitcrypt.target.file=secrets.properties
 ```
 
 ### In a project
@@ -96,7 +96,7 @@ using the `decrypt-files` goal:
 <plugin>
     <groupId>au.net.causal.jgitcrypt</groupId>
     <artifactId>jgitcrypt-maven-plugin</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <executions>     
         <execution>
             <id>decrypt-files</id>
@@ -129,7 +129,7 @@ Similar to the decryption configuration, except using the `encrypt-files` goal i
 <plugin>
     <groupId>au.net.causal.jgitcrypt</groupId>
     <artifactId>jgitcrypt-maven-plugin</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <executions>     
         <execution>
             <id>encrypt-files</id>

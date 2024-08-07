@@ -54,14 +54,14 @@ creates a new random git-crypt key and saves it to a file.
 ## Downloading
 
 JGitcrypt can be downloaded from Maven central, either 
-[directly](https://repo1.maven.org/maven2/au/net/causal/jgitcrypt/jgitcrypt/1.0/jgitcrypt-1.0.jar) 
+[directly](https://repo1.maven.org/maven2/au/net/causal/jgitcrypt/jgitcrypt/1.2/jgitcrypt-1.2.jar) 
 or in a Maven project using GAV co-ordinates:
 
 ```
 <dependency>
     <groupId>au.net.causal.jgitcrypt</groupId>
     <artifactId>jgitcrypt</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
 </dependency>
 ```
 
